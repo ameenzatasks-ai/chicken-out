@@ -1,0 +1,202 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Registered so the OG ⇄ Spicy switch can animate the colors themselves
+   rather than snapping. */
+@property --brand {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e80404;
+}
+@property --brand-dark {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #b80303;
+}
+@property --accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fcc810;
+}
+
+@layer base {
+  /* OG: the logo's field red and wordmark yellow. */
+  :root {
+    --brand: #e80404;
+    --brand-dark: #b80303;
+    --accent: #fcc810;
+    --night: #1e1210;
+    --ink: #140c0a;
+    --cream: #fff6e6;
+    transition:
+      --brand 700ms ease,
+      --brand-dark 700ms ease,
+      --accent 700ms ease;
+  }
+
+  /* Spicy: red runs hotter toward orange, yellow heats up to flame. */
+  :root[data-heat="spicy"] {
+    --brand: #d81a00;
+    --brand-dark: #941000;
+    --accent: #ff7419;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+    -webkit-tap-highlight-color: transparent;
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-night font-sans text-body text-cream antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-accent text-ink;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  /* Anton ships one weight; never let the browser fake a bold. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-normal uppercase;
+    font-synthesis: none;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  .container-co {
+    @apply mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Buttons: rounded pills. Solid red for the main action, frosted glass for
+     the secondary one. Pair .btn with a variant: className="btn btn-red". */
+  .btn {
+    @apply inline-flex h-12 items-center justify-center gap-2.5 rounded-full px-6 font-sans text-[0.9375rem] font-bold uppercase tracking-[0.06em] transition-[transform,background-color,border-color,box-shadow] duration-200 active:scale-[0.97];
+  }
+  .btn-red {
+    @apply bg-brand text-white shadow-glow hover:bg-brand-dark;
+  }
+  .btn-yellow {
+    @apply bg-accent text-ink shadow-glow-accent hover:brightness-95;
+  }
+  .btn-glass {
+    @apply border border-white/25 bg-white/[0.06] text-white backdrop-blur-md hover:border-white/45 hover:bg-white/[0.12];
+  }
+
+  /* Circle-arrow chip that rides at the end of a button. */
+  .btn-arrow {
+    @apply -mr-3 grid h-8 w-8 place-items-center rounded-full bg-white/15 transition-transform duration-200;
+  }
+  .btn:hover .btn-arrow {
+    transform: translateX(3px);
+  }
+  .btn-yellow .btn-arrow {
+    @apply bg-black/10;
+  }
+  .btn-glass .btn-arrow {
+    @apply border border-white/30 bg-transparent;
+  }
+
+  /* Frosted panel: cards, pills, tiles. */
+  .glass {
+    @apply border border-white/[0.12] bg-white/[0.06] backdrop-blur-xl;
+  }
+
+  /* Logo-style display word: yellow with a stepped black extrusion. */
+  .text-stamp {
+    color: var(--accent);
+    text-shadow:
+      1px 1px 0 var(--ink),
+      2px 2px 0 var(--ink),
+      3px 3px 0 var(--ink),
+      4px 4px 0 var(--ink),
+      5px 5px 0 var(--ink),
+      6px 6px 0 var(--ink);
+  }
+  .text-stamp-sm {
+    color: var(--accent);
+    text-shadow:
+      1px 1px 0 var(--ink),
+      2px 2px 0 var(--ink),
+      3px 3px 0 var(--ink);
+  }
+
+  /* Red tile wall from the brand's shoots, lit from inside a dark room:
+     grout lines over a red glow that falls off into near-black. Move the
+     light with --glow-at (default: behind the hero product). */
+  .bg-tiles-dark {
+    background-color: var(--night);
+    background-image:
+      linear-gradient(to right, rgba(255, 140, 120, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 140, 120, 0.1) 1px, transparent 1px),
+      radial-gradient(65% 70% at var(--glow-at, 72% 42%), color-mix(in srgb, var(--brand) 75%, transparent), transparent 75%),
+      radial-gradient(55% 55% at 0% 100%, color-mix(in srgb, var(--brand) 38%, transparent), transparent 70%);
+    background-size:
+      64px 64px,
+      64px 64px,
+      100% 100%,
+      100% 100%;
+  }
+
+  /* Brighter tile wall, for small brand moments (Instagram card). */
+  .bg-tiles {
+    background-color: var(--brand);
+    background-image:
+      linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.55)),
+      linear-gradient(to right, rgba(255, 236, 228, 0.22) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 236, 228, 0.22) 1px, transparent 1px);
+    background-size:
+      100% 100%,
+      56px 56px,
+      56px 56px;
+  }
+
+  /* Polaroid frame — the logo's signature device. */
+  .polaroid {
+    @apply relative bg-cream p-3 pb-14 shadow-photo sm:p-4 sm:pb-16;
+  }
+
+  .eyebrow-script {
+    @apply font-script text-script font-normal normal-case;
+  }
+
+  /* Small uppercase kicker above card titles. */
+  .kicker {
+    @apply font-sans text-label font-bold uppercase text-accent;
+  }
+
+  /* Display-face text outside headings (prices, badges, stats). */
+  .display {
+    @apply font-display font-normal uppercase;
+    font-synthesis: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

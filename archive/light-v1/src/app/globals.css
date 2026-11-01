@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Registered so the OG ⇄ Spicy switch can animate the colors themselves
+   rather than snapping. */
+@property --brand {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e80404;
+}
+@property --brand-dark {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #b80303;
+}
+@property --accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fcc810;
+}
+
+@layer base {
+  /* OG: the logo's field red and wordmark yellow. */
+  :root {
+    --brand: #e80404;
+    --brand-dark: #b80303;
+    --accent: #fcc810;
+    --ink: #140c0a;
+    --cream: #fff6e6;
+    transition:
+      --brand 700ms ease,
+      --brand-dark 700ms ease,
+      --accent 700ms ease;
+  }
+
+  /* Spicy: red deepens to chili, yellow heats up to flame orange. */
+  :root[data-heat="spicy"] {
+    --brand: #a30000;
+    --brand-dark: #6e0000;
+    --accent: #ff7419;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-paper font-sans text-body text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-accent text-ink;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-normal uppercase;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  .container-co {
+    @apply mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Buttons: chunky pill with a black border and hard offset shadow — the
+     same black extrusion the logo wordmark sits on. Presses flat on click. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-ink px-6 py-3 font-sans text-[0.9375rem] font-bold uppercase tracking-[0.06em] shadow-stamp transition-[transform,box-shadow,background-color] duration-150;
+  }
+  .btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 0 var(--ink);
+  }
+  .btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 0 var(--ink);
+  }
+  /* Variants pair with .btn: className="btn btn-red". */
+  .btn-red {
+    @apply bg-brand text-white hover:bg-brand-dark;
+  }
+  .btn-yellow {
+    @apply bg-accent text-ink;
+  }
+  .btn-light {
+    @apply bg-cream text-ink;
+  }
+  .btn-ink {
+    @apply bg-ink text-white;
+  }
+  .btn-ink:hover {
+    box-shadow: 6px 6px 0 0 var(--accent);
+  }
+
+  /* Logo-style display word: yellow with a stepped black extrusion. */
+  .text-stamp {
+    color: var(--accent);
+    text-shadow:
+      1px 1px 0 var(--ink),
+      2px 2px 0 var(--ink),
+      3px 3px 0 var(--ink),
+      4px 4px 0 var(--ink),
+      5px 5px 0 var(--ink),
+      6px 6px 0 var(--ink);
+  }
+  .text-stamp-sm {
+    color: var(--accent);
+    text-shadow:
+      1px 1px 0 var(--ink),
+      2px 2px 0 var(--ink),
+      3px 3px 0 var(--ink);
+  }
+
+  /* Red tile wall, as in the brand's Instagram shoots: glossy red squares,
+     pale grout, a soft light falloff so it never reads flat. */
+  .bg-tiles {
+    background-color: var(--brand);
+    background-image:
+      radial-gradient(120% 90% at 30% 20%, rgba(255, 255, 255, 0.12), transparent 55%),
+      radial-gradient(120% 120% at 100% 100%, rgba(80, 0, 0, 0.35), transparent 60%),
+      linear-gradient(to right, rgba(255, 236, 228, 0.28) 2px, transparent 2px),
+      linear-gradient(to bottom, rgba(255, 236, 228, 0.28) 2px, transparent 2px);
+    background-size:
+      100% 100%,
+      100% 100%,
+      64px 64px,
+      64px 64px;
+  }
+
+  /* Fine grid from the logo background. */
+  .bg-checker {
+    background-color: var(--brand);
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Polaroid frame — the logo's signature device. */
+  .polaroid {
+    @apply relative bg-cream p-3 pb-14 shadow-photo sm:p-4 sm:pb-16;
+  }
+
+  .eyebrow-script {
+    @apply font-script text-script normal-case;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
