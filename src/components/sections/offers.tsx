@@ -1,39 +1,29 @@
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { content } from "@/lib/content";
 import { site } from "@/lib/site";
-import { BtnArrow } from "@/components/ui/brand";
 import { cn } from "@/lib/cn";
 
-/**
- * Reference two-up promo banners: copy left, product cut-out bleeding off
- * the corner. One lit in deep brand red, one frosted glass.
- */
+/** Reference two-up promo banners: copy left, product cut-out bleeding off the corner. */
 export function Offers() {
   return (
-    <section aria-label="Menu highlights" className="bg-night py-16 md:py-20">
-      <div className="container-co grid gap-5 md:grid-cols-2">
-        {content.offers.map((o, i) => {
-          const lit = i === 0;
+    <section aria-label="Menu highlights" className="bg-paper py-16 md:py-20">
+      <div className="container-co grid gap-6 md:grid-cols-2">
+        {content.offers.map((o) => {
+          const dark = o.tone === "ink";
           return (
             <article
               key={o.title}
               className={cn(
-                "relative isolate min-h-[330px] overflow-hidden rounded-[2rem] p-8 md:p-10",
-                lit ? "ring-1 ring-white/10" : "glass",
+                "relative isolate min-h-[340px] overflow-hidden rounded-[2rem] border-[3px] border-ink p-8 shadow-stamp-lg md:p-10",
+                dark ? "bg-ink text-white" : "bg-accent text-ink",
               )}
-              style={
-                lit
-                  ? {
-                      background:
-                        "radial-gradient(90% 90% at 85% 90%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 60%), linear-gradient(135deg, var(--brand), color-mix(in srgb, var(--brand) 40%, #000))",
-                    }
-                  : undefined
-              }
             >
+              {dark && <div aria-hidden="true" className="bg-checker absolute inset-0 -z-10 opacity-[0.14]" />}
               <div className="relative z-10 max-w-[60%]">
-                <p className="eyebrow-script text-accent">{o.script}</p>
-                <h3 className="mt-2 text-h3 text-white">{o.title}</h3>
-                <ul className={cn("mt-4 space-y-1 text-small", lit ? "text-white/80" : "text-cream/65")}>
+                <p className={cn("eyebrow-script", dark ? "text-accent" : "text-brand")}>{o.script}</p>
+                <h3 className={cn("mt-2 text-h3", dark && "text-cream")}>{o.title}</h3>
+                <ul className={cn("mt-4 space-y-1 text-small font-semibold", dark ? "text-cream/85" : "text-ink-soft")}>
                   {o.lines.map((l) => (
                     <li key={l}>{l}</li>
                   ))}
@@ -42,10 +32,10 @@ export function Offers() {
                   href={site.order.foodpanda}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={cn("btn mt-7", lit ? "btn-glass" : "btn-red")}
+                  className={cn("btn mt-7", dark ? "btn-yellow" : "btn-ink")}
                 >
                   {o.cta}
-                  <BtnArrow external />
+                  <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 </a>
               </div>
               <Image
@@ -55,10 +45,10 @@ export function Offers() {
                 height={o.artSize[1]}
                 sizes="(max-width: 768px) 55vw, 320px"
                 className={cn(
-                  "absolute drop-shadow-[0_30px_30px_rgba(0,0,0,.55)]",
-                  lit
-                    ? "-bottom-16 -right-10 w-[40%] max-w-[230px] rotate-[10deg]"
-                    : "-bottom-10 -right-6 w-[42%] max-w-[250px] -rotate-12",
+                  "absolute drop-shadow-[0_20px_20px_rgba(0,0,0,.35)]",
+                  dark
+                    ? "-bottom-6 -right-8 w-[50%] max-w-[300px] -rotate-12"
+                    : "-bottom-16 -right-10 w-[40%] max-w-[230px] rotate-[10deg]",
                 )}
               />
             </article>

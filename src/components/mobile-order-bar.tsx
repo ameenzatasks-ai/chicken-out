@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapPin } from "lucide-react";
+import { MapPin, ShoppingBag } from "lucide-react";
 import { OpenStatus } from "@/components/open-status";
-import { BtnArrow } from "@/components/ui/brand";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/cn";
 
@@ -28,7 +27,7 @@ export function MobileOrderBar() {
       aria-hidden={!show}
       inert={!show}
       className={cn(
-        "fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-night/80 backdrop-blur-xl transition-transform duration-300 ease-out lg:hidden",
+        "fixed inset-x-0 bottom-0 z-40 border-t-[3px] border-ink bg-ink transition-transform duration-300 ease-out lg:hidden",
         show ? "translate-y-0" : "translate-y-[110%]",
       )}
     >
@@ -39,7 +38,7 @@ export function MobileOrderBar() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Get directions"
-          className="btn btn-glass !h-11 !w-11 shrink-0 !px-0"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 border-cream/80 text-cream transition-colors hover:border-accent hover:text-accent"
         >
           <MapPin className="h-5 w-5" aria-hidden="true" />
         </a>
@@ -47,10 +46,10 @@ export function MobileOrderBar() {
           href={site.order.foodpanda}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn btn-red !h-11 shrink-0 !px-5"
+          className="btn btn-yellow shrink-0 !px-5 !py-2.5 !shadow-none"
         >
+          <ShoppingBag className="h-4 w-4" aria-hidden="true" />
           Order now
-          <BtnArrow external />
         </a>
       </div>
     </nav>

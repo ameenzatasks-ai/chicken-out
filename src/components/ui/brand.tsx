@@ -1,13 +1,13 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { ArrowRight, ArrowUpRight, Flame } from "lucide-react";
+import { Flame } from "lucide-react";
 import { TAKA } from "@/lib/site";
 import { cn } from "@/lib/cn";
 
 /**
  * Brand primitives shared across sections: the polaroid frame and the
  * mascot-and-wordmark bucket both come straight from the logo; the price
- * sticker mirrors the round promo badges in the reference designs.
+ * sticker mirrors the round promo badges in the reference template.
  */
 
 export function Polaroid({
@@ -29,7 +29,7 @@ export function Polaroid({
 }) {
   return (
     <figure className={cn("polaroid", className)}>
-      <div className="relative aspect-[4/5] overflow-hidden bg-night">
+      <div className="relative aspect-[4/5] overflow-hidden bg-ink">
         <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className="object-cover" />
       </div>
       {caption && (
@@ -61,32 +61,22 @@ export function PriceSticker({
   return (
     <div
       className={cn(
-        "relative grid h-[100px] w-[100px] place-items-center rounded-full bg-accent text-ink shadow-glow-accent ring-[6px] ring-white/10 sm:h-[116px] sm:w-[116px]",
+        "relative grid h-[104px] w-[104px] place-items-center rounded-full border-[3px] border-ink bg-accent text-ink shadow-stamp sm:h-[120px] sm:w-[120px]",
         className,
       )}
     >
       {hot && (
-        <span className="absolute -right-1 -top-1 grid h-9 w-9 place-items-center rounded-full bg-brand text-white ring-4 ring-night">
+        <span className="absolute -right-1 -top-1 grid h-9 w-9 place-items-center rounded-full border-2 border-ink bg-brand text-white">
           <Flame className="h-4 w-4 fill-current" aria-hidden="true" />
         </span>
       )}
       <div className="text-center leading-none">
-        {top && <span className="block text-[0.8rem] font-bold uppercase tracking-[0.14em]">{top}</span>}
-        <span className="display mt-0.5 block text-[2.1rem] sm:text-[2.5rem]">
+        {top && <span className="block font-sans text-[0.8rem] font-bold uppercase tracking-[0.14em]">{top}</span>}
+        <span className="mt-0.5 block font-display text-[2.1rem] sm:text-[2.5rem]">
           {typeof price === "number" ? `${TAKA}${price}` : price}
         </span>
       </div>
     </div>
-  );
-}
-
-/** Circle-arrow chip at the end of a button (styles in globals.css). */
-export function BtnArrow({ external = false }: { external?: boolean }) {
-  const Icon = external ? ArrowUpRight : ArrowRight;
-  return (
-    <span className="btn-arrow" aria-hidden="true">
-      <Icon className="h-4 w-4" />
-    </span>
   );
 }
 
@@ -105,7 +95,7 @@ export function BucketStack({ className, priority = false }: { className?: strin
         height={651}
         priority={priority}
         sizes="(max-width: 1024px) 70vw, 460px"
-        className="absolute left-0 w-full drop-shadow-[0_40px_40px_rgba(0,0,0,.6)]"
+        className="absolute left-0 w-full drop-shadow-[0_30px_30px_rgba(0,0,0,.45)]"
         style={{ top: "24.69%" }}
       />
       <Image
@@ -136,18 +126,20 @@ export function BucketStack({ className, priority = false }: { className?: strin
 export function SectionTitle({
   script,
   title,
+  scriptClass = "text-brand",
   className,
   align = "center",
 }: {
   script: string;
   title: ReactNode;
+  scriptClass?: string;
   className?: string;
   align?: "center" | "left";
 }) {
   return (
     <div className={cn(align === "center" ? "text-center" : "text-left", className)}>
-      <p className="eyebrow-script text-accent">{script}</p>
-      <h2 className="mt-2 text-h2 text-white">{title}</h2>
+      <p className={cn("eyebrow-script", scriptClass)}>{script}</p>
+      <h2 className="mt-1 text-h2">{title}</h2>
     </div>
   );
 }

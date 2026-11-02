@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { MapPin, Menu as MenuIcon, X } from "lucide-react";
+import { MapPin, Menu as MenuIcon, ShoppingBag, X } from "lucide-react";
 import { InstagramIcon } from "@/components/brand-icons";
 import { HeatSwitch } from "@/components/heat";
 import { OpenStatus } from "@/components/open-status";
-import { BtnArrow } from "@/components/ui/brand";
 import { navLinks, site } from "@/lib/site";
 import { cn } from "@/lib/cn";
 
 /**
- * Slim info bar, then a frosted dark bar: logo left, nav centred, heat
- * switch + red order CTA right. The bar sticks and firms up once scrolled.
+ * Reference-template header: slim info bar, then a white bar with the logo
+ * left, nav centred, red order CTA right. The white bar sticks and gains a
+ * hard bottom edge once the page scrolls.
  */
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -35,9 +35,9 @@ export function SiteHeader() {
   return (
     <>
       {/* Info bar */}
-      <div className="border-b border-white/[0.06] bg-night-deep text-cream/75">
-        <div className="container-co flex h-9 items-center justify-between gap-4 text-[0.8125rem]">
-          <div className="flex min-w-0 items-center gap-6">
+      <div className="bg-ink text-cream">
+        <div className="container-co flex h-10 items-center justify-between gap-4 text-[0.8125rem] font-medium">
+          <div className="flex min-w-0 items-center gap-5">
             <OpenStatus />
             <span className="hidden items-center gap-1.5 truncate md:flex">
               <MapPin className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
@@ -48,7 +48,7 @@ export function SiteHeader() {
             href={site.social.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 whitespace-nowrap transition-colors hover:text-white"
+            className="flex items-center gap-1.5 whitespace-nowrap transition-colors hover:text-accent"
           >
             <InstagramIcon className="h-4 w-4" />
             <span className="hidden sm:inline">{site.social.instagramHandle}</span>
@@ -59,11 +59,11 @@ export function SiteHeader() {
       {/* Main bar */}
       <header
         className={cn(
-          "sticky top-0 z-50 border-b backdrop-blur-xl transition-colors duration-300",
-          scrolled || open ? "border-white/10 bg-night/85" : "border-transparent bg-night/40",
+          "sticky top-0 z-50 bg-paper transition-shadow duration-200",
+          scrolled || open ? "shadow-[0_2px_0_0_#140C0A]" : "shadow-none",
         )}
       >
-        <div className="container-co flex h-[72px] items-center justify-between gap-6 md:h-20">
+        <div className="container-co flex h-[76px] items-center justify-between gap-6 md:h-[88px]">
           <a href="#top" aria-label={`${site.name} — home`} className="block shrink-0">
             <Image
               src="/images/logo.png"
@@ -71,17 +71,17 @@ export function SiteHeader() {
               width={447}
               height={447}
               priority
-              className="h-12 w-12 rounded-xl ring-1 ring-white/15 md:h-14 md:w-14"
+              className="h-14 w-14 rounded-lg border-2 border-ink shadow-stamp md:h-16 md:w-16"
             />
           </a>
 
           <nav aria-label="Main" className="hidden lg:block">
-            <ul className="flex items-center gap-9">
+            <ul className="flex items-center gap-10">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="relative py-2 text-[0.9375rem] font-bold uppercase tracking-[0.08em] text-cream/85 transition-colors after:absolute after:-bottom-0.5 after:left-0 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:rounded-full after:bg-brand after:transition-transform hover:text-white hover:after:scale-x-100"
+                    className="relative font-sans text-[1rem] font-bold uppercase tracking-[0.08em] text-ink transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-[3px] after:w-full after:origin-left after:scale-x-0 after:bg-brand after:transition-transform hover:text-brand hover:after:scale-x-100"
                   >
                     {link.label}
                   </a>
@@ -96,8 +96,9 @@ export function SiteHeader() {
               href={site.order.foodpanda}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-red hidden !h-10 !px-5 sm:inline-flex"
+              className="btn btn-red hidden !px-5 !py-2.5 sm:inline-flex"
             >
+              <ShoppingBag className="h-4 w-4" aria-hidden="true" />
               Order now
             </a>
             <button
@@ -106,7 +107,7 @@ export function SiteHeader() {
               aria-expanded={open}
               aria-controls="mobile-menu"
               aria-label={open ? "Close menu" : "Open menu"}
-              className="glass grid h-10 w-10 place-items-center rounded-full text-white lg:hidden"
+              className="grid h-11 w-11 place-items-center rounded-full border-2 border-ink bg-accent text-ink lg:hidden"
             >
               {open ? <X className="h-5 w-5" aria-hidden="true" /> : <MenuIcon className="h-5 w-5" aria-hidden="true" />}
             </button>
@@ -117,17 +118,17 @@ export function SiteHeader() {
         <div
           id="mobile-menu"
           className={cn(
-            "overflow-hidden transition-[max-height] duration-300 lg:hidden",
+            "overflow-hidden bg-paper transition-[max-height] duration-300 lg:hidden",
             open ? "max-h-[420px]" : "max-h-0",
           )}
         >
-          <ul className="container-co flex flex-col border-t border-white/10 pb-5 pt-2">
+          <ul className="container-co flex flex-col border-t-2 border-ink pb-5 pt-2">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="display block border-b border-white/[0.06] py-3 text-[1.75rem] text-white"
+                  className="block border-b border-paper-line py-3 font-display text-[1.75rem] uppercase text-ink"
                 >
                   {link.label}
                 </a>
@@ -140,8 +141,8 @@ export function SiteHeader() {
                 rel="noopener noreferrer"
                 className="btn btn-red w-full"
               >
+                <ShoppingBag className="h-4 w-4" aria-hidden="true" />
                 Order on foodpanda
-                <BtnArrow external />
               </a>
             </li>
           </ul>

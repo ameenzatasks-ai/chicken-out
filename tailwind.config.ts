@@ -1,12 +1,12 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Chicken Out tokens — dark edition.
- *   Brand colors are measured from the supplied logo (Images/Chicken Out.png):
+ * Chicken Out tokens.
+ *   Colors are measured from the supplied logo (Images/Chicken Out.png):
  *   field red #E80404, wordmark yellow #FCC810, polaroid off-white #FFF6E6.
- *   Surfaces are red-tinted warm darks so the red reads as glow.
- *   Type: Anton (uppercase display), Barlow (body/UI), Yellowtail (retro
- *   script from the brand's Instagram creatives).
+ *   Type: Anton (display, condensed like the reference template's hero),
+ *   Yellowtail (retro script, as on the brand's Instagram creatives),
+ *   Barlow (body/UI).
  */
 const config: Config = {
   content: [
@@ -32,18 +32,18 @@ const config: Config = {
       accent: {
         DEFAULT: "var(--accent)",
       },
-      // Red-tinted warm darks, darkest to lightest. Lifted off near-black
-      // so the page reads rich rather than heavy.
-      night: {
-        deep: "#150B0A",
-        DEFAULT: "#1E1210",
-        raised: "#2A1916",
-      },
       ink: {
         DEFAULT: "#140C0A",
+        soft: "#3A302C",
+        muted: "#6B605B",
       },
       cream: {
         DEFAULT: "#FFF6E6",
+        deep: "#F6E7CB",
+      },
+      paper: {
+        DEFAULT: "#FFFFFF",
+        line: "#EADFCF",
       },
     },
 
@@ -79,10 +79,10 @@ const config: Config = {
       },
 
       boxShadow: {
-        // Soft brand-colored glow under primary actions and hovered cards.
-        glow: "0 18px 50px -18px var(--brand)",
-        "glow-accent": "0 14px 44px -14px var(--accent)",
-        photo: "0 24px 60px -18px rgba(0,0,0,.8)",
+        // Hard offset shadow, same move as the logo's black extrusion.
+        stamp: "4px 4px 0 0 #140C0A",
+        "stamp-lg": "8px 8px 0 0 #140C0A",
+        photo: "0 18px 40px -12px rgba(20,12,10,.45)",
       },
 
       keyframes: {

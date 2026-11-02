@@ -1,8 +1,7 @@
 import { Bike, Clock, MapPin, Star } from "lucide-react";
 import { site } from "@/lib/site";
-import { cn } from "@/lib/cn";
 
-/** Frosted fact tiles along the bottom of the hero (reference template's feature row). */
+/** Yellow fact strip under the hero — the template's "features" row. */
 const items = [
   { icon: Star, title: `${site.rating.value} / 5 rating`, sub: `${site.rating.count} ratings on foodpanda` },
   { icon: Clock, title: "Open late", sub: site.hours.short },
@@ -10,20 +9,22 @@ const items = [
   { icon: Bike, title: "Delivery & pickup", sub: "Order through foodpanda" },
 ];
 
-export function Highlights({ className }: { className?: string }) {
+export function Highlights() {
   return (
-    <ul aria-label="Highlights" className={cn("grid grid-cols-2 gap-3 lg:grid-cols-4", className)}>
-      {items.map(({ icon: Icon, title, sub }) => (
-        <li key={title} className="glass flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:gap-3.5">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white/[0.07] text-accent ring-1 ring-white/10">
-            <Icon className="h-5 w-5" aria-hidden="true" />
-          </span>
-          <span className="min-w-0">
-            <span className="display block text-[1.3rem] leading-tight tracking-wide text-white">{title}</span>
-            <span className="mt-0.5 block text-[0.8125rem] leading-snug text-cream/60">{sub}</span>
-          </span>
-        </li>
-      ))}
-    </ul>
+    <section aria-label="Highlights" className="border-y-[3px] border-ink bg-accent">
+      <ul className="container-co grid grid-cols-1 divide-y-2 divide-ink/15 sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4">
+        {items.map(({ icon: Icon, title, sub }) => (
+          <li key={title} className="flex items-center gap-4 py-5 lg:py-6">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border-2 border-ink bg-cream text-brand">
+              <Icon className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <span>
+              <span className="block font-display text-[1.35rem] uppercase leading-tight tracking-wide text-ink">{title}</span>
+              <span className="block text-small font-medium text-ink-soft">{sub}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

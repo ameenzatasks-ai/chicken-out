@@ -3,10 +3,18 @@ import { Anton, Barlow, Noto_Sans_Bengali, Yellowtail } from "next/font/google";
 import { site } from "@/lib/site";
 import "./globals.css";
 
-// Condensed uppercase display face for headlines — the client's choice.
+// Condensed display face, like the reference template's hero headlines.
 const display = Anton({
   subsets: ["latin"],
   variable: "--font-display",
+  display: "swap",
+  weight: "400",
+});
+
+// Retro script, as on the brand's Instagram creatives ("Certified Crunch").
+const script = Yellowtail({
+  subsets: ["latin"],
+  variable: "--font-script",
   display: "swap",
   weight: "400",
 });
@@ -16,14 +24,6 @@ const body = Barlow({
   variable: "--font-body",
   display: "swap",
   weight: ["400", "500", "600", "700"],
-});
-
-// Retro script, as on the brand's Instagram creatives ("Certified Crunch").
-const script = Yellowtail({
-  subsets: ["latin"],
-  variable: "--font-script",
-  display: "swap",
-  weight: "400",
 });
 
 /**
@@ -73,8 +73,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1E1210",
-  colorScheme: "dark",
+  themeColor: "#E80404",
+  colorScheme: "light",
 };
 
 /** Restaurant structured data — published facts only. */
@@ -103,12 +103,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${script.variable} ${bengali.variable}`}
+      className={`${display.variable} ${script.variable} ${body.variable} ${bengali.variable}`}
     >
       <body>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-4 focus:py-2 focus:font-bold focus:text-ink"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:border-2 focus:border-ink focus:bg-accent focus:px-4 focus:py-2 focus:font-bold focus:text-ink"
         >
           Skip to content
         </a>

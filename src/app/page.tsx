@@ -1,6 +1,7 @@
 import { HeatProvider } from "@/components/heat";
 import { SiteHeader } from "@/components/site-header";
 import { Hero } from "@/components/hero/hero";
+import { Highlights } from "@/components/sections/highlights";
 import { About } from "@/components/sections/about";
 import { MenuSection } from "@/components/sections/menu";
 import { Ribbon } from "@/components/sections/ribbon";
@@ -23,6 +24,7 @@ export default function Home() {
       <SiteHeader />
       <main id="main">
         <Hero />
+        <Highlights />
         <About />
         <MenuSection />
         <Ribbon />

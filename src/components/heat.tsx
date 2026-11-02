@@ -60,15 +60,15 @@ export function HeatSwitch({ size = "lg", className }: { size?: "lg" | "sm"; cla
       aria-label="Spicy mode"
       onClick={toggle}
       className={cn(
-        "glass relative inline-grid shrink-0 grid-cols-2 items-center rounded-full p-1 font-sans font-semibold transition-colors duration-200 hover:border-white/25",
-        lg ? "h-14 w-[232px] text-[0.95rem]" : "h-10 w-[140px] text-[0.8125rem]",
+        "relative inline-grid shrink-0 grid-cols-2 items-center rounded-full border-2 border-ink bg-ink p-1 font-sans font-bold uppercase tracking-[0.08em] shadow-stamp transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0",
+        lg ? "h-14 w-[232px] text-[0.95rem]" : "h-10 w-[140px] text-[0.75rem]",
         className,
       )}
     >
       <span
         aria-hidden="true"
         className={cn(
-          "absolute bottom-1 left-1 top-1 w-[calc(50%-4px)] rounded-full bg-accent shadow-glow-accent transition-transform duration-300 ease-[cubic-bezier(.3,1.5,.5,1)]",
+          "absolute bottom-1 left-1 top-1 w-[calc(50%-4px)] rounded-full border-2 border-ink bg-accent transition-transform duration-300 ease-[cubic-bezier(.3,1.5,.5,1)]",
           on && "translate-x-full",
         )}
       />

@@ -1,76 +1,81 @@
 ---
 name: frontend-design
-description: Chicken Out design system — dark edition. Restaurant-template structure (YouTube short ZYqRlWiiFjQ), dark warm skin with glass buttons after the client's KFC-concept reference, Anton/Barlow/Yellowtail fonts (never change), brand colors and voice from the logo + Instagram. Load before building or restyling any UI in this project.
+description: Chicken Out design system — restaurant-template structure (YouTube short ZYqRlWiiFjQ) dressed in the brand's Instagram look. Tokens, fonts, section order and content rules. Load before building or restyling any UI in this project.
 ---
 
-# Chicken Out — Design System (dark edition)
+# Chicken Out — Design System
 
-**Direction.** Section order follows the restaurant template in the client's
-reference video (youtube.com/shorts/ZYqRlWiiFjQ). The skin follows a dark,
-premium fast-food concept the client liked: warm dark surfaces lit by red
-glows, frosted-glass cards and buttons, and **uncluttered** layouts (the client found that reference too crowded). Brand
-identity is kept: logo red + wordmark yellow, polaroid frames, red tile wall,
-script slogans from Instagram ("Certified Crunch").
+**Direction.** Section structure follows the restaurant template shown in the
+client's reference video (youtube.com/shorts/ZYqRlWiiFjQ). The skin comes from
+the brand itself: the logo (Images/Chicken Out.png) and the Instagram feed
+(instagram.com/chickenoutdhaka) — red tile walls, mustard yellow, retro
+polaroid stickers, chunky wordmark with a black extrusion, script slogans.
 
-The previous light/retro version is archived in `archive/light-v1/`
-(src, tailwind config, old SKILL.md).
+**History.** A dark "KFC-concept" edition was tried, but the client chose this
+original light version instead (2026-11-02). The dark version is in git commit
+`6f26dd6`; don't reintroduce it unless asked.
 
 **Content rule.** Never invent facts. Menu, prices, hours, address, rating
-and reviews come from foodpanda and the Instagram bio. All copy lives in
-`src/lib/content.ts`, `src/lib/site.ts`, `src/lib/menu.ts`.
+and reviews come from foodpanda (foodpanda.com.bd/restaurant/kpzz/chicken-out)
+and the Instagram bio. Phone, email and domain are unpublished — leave them
+out. All copy lives in `src/lib/content.ts`, `src/lib/site.ts`, `src/lib/menu.ts`.
 
 ## Palette (tailwind.config.ts)
 
 | Token | Value | Use |
 |---|---|---|
-| `brand` | `#E80404` (spicy `#D81A00`) | Primary buttons, glows, active tabs, badges |
-| `accent` | `#FCC810` (spicy `#FF7419`) | Headline highlight line, script eyebrows, kickers, price pills |
-| `night-deep` / `night` / `night-raised` | `#150B0A` / `#1E1210` / `#2A1916` | Red-tinted warm darks, darkest to lightest. The client found near-black too dark, so don't go darker |
-| `cream` | `#FFF6E6` | Body text (use /55–/90 opacity), polaroid frames |
+| `brand` | `#E80404` (spicy `#A30000`) | Logo field red: tile walls, primary buttons, accents |
+| `accent` | `#FCC810` (spicy `#FF7419`) | Wordmark yellow: stamped headlines, stickers, highlight strip |
+| `ink` | `#140C0A` | Text, borders, hard shadows, dark bands, footer |
+| `cream` | `#FFF6E6` | Polaroid frames, alternate section bg, cards |
+| `paper` | `#FFFFFF` | Default page bg |
 
-`brand`, `brand-dark`, `accent` are CSS variables (registered with `@property`
-so the OG ⇄ Spicy switch animates them). Opacity modifiers like `bg-brand/50`
-don't work on them; use `color-mix(in srgb, var(--brand) N%, …)` in inline styles.
+Surfaces: `.bg-tiles` (red tile wall, 64px grout) for hero/reviews/IG card;
+`.bg-checker` (logo's fine 28px grid) for small accents. Light theme only.
 
-Surfaces: `.bg-tiles-dark` (tile grout over a red glow in the dark; move the
-light with `--glow-at`), `.bg-tiles` (brighter red tile card), `.glass`
-(frosted panel). Dark only.
+`brand`, `brand-dark` and `accent` are CSS variables (registered with
+`@property` in globals.css so they animate). Spicy mode sets
+`data-heat="spicy"` on `<html>` and the whole page retints. Opacity
+modifiers (`bg-brand/50`) don't work on them; never hardcode the hex.
 
-## Type — do not change the fonts
+## Type — do not change the fonts (client's explicit wish)
 
-The client explicitly wants these fonts kept. A switch to Archivo was rejected.
+- **Anton** (`font-display`) — all headings, uppercase. `text-hero`, `text-h2`, `text-h3`, `text-h4`.
+- **Yellowtail** (`font-script`, `.eyebrow-script`) — script eyebrow above every heading.
+- **Barlow** (`font-sans`) — body/UI. `text-lead`, `text-body`, `text-small`, `text-label`.
+- **Noto Sans Bengali** — fallback so `৳` renders. Never remove.
+- `.text-stamp` / `.text-stamp-sm` — yellow + stepped black extrusion, the logo move. Display words only.
 
-- **Anton** (`font-display`): every headline, uppercase, one weight only (`font-synthesis: none`; never add `font-bold/black`). For display text outside headings (prices, badges, names, stats) use the `.display` class. Sizes: `text-hero`, `text-h2`, `text-h3`, `text-h4`.
-- **Barlow** (`font-sans`): body and UI. Buttons, nav, tabs and tags are bold uppercase with letter-spacing.
-- **Yellowtail** (`font-script`, `.eyebrow-script`): accent-colored script line above every headline. This is the brand's Instagram voice.
-- `.text-stamp` / `.text-stamp-sm`: wordmark yellow with a stepped black extrusion, like the logo, for the highlight line of a headline.
-- `.kicker`: small uppercase accent label above card titles.
-- **Noto Sans Bengali**: fallback so `৳` renders. Never remove.
-
-New font-size / shadow tokens must also be added to `src/lib/cn.ts`.
+New font-size tokens must also be added to `src/lib/cn.ts` (tailwind-merge).
 
 ## Components
 
-- Buttons: `btn` + `btn-red` (primary, glow) | `btn-glass` (transparent frosted, white border) | `btn-yellow`. End with `<BtnArrow />` (circle-arrow chip; `external` for off-site links).
-- `src/components/ui/brand.tsx`: `Polaroid`, `PriceSticker`, `BtnArrow`, `BucketStack`, `SectionTitle`, `SpicyMark`.
-- `src/components/heat.tsx`: OG ⇄ Spicy switch (hero + header). Swaps hero, ribbon slogans, menu filter; adds embers + flame badges.
-- `src/components/open-status.tsx`: live open/closed badge (Asia/Dhaka).
-- `src/components/mobile-order-bar.tsx`: frosted bottom bar below `lg` after the hero.
-- `src/components/sections/highlights.tsx`: frosted fact tiles, rendered inside the hero.
+- Buttons: `btn` + `btn-red | btn-yellow | btn-light | btn-ink` — pill, 2px ink border, hard offset shadow, presses flat.
+- `src/components/ui/brand.tsx`: `Polaroid`, `PriceSticker`, `BucketStack` (bucket + heap + front-lip cut-outs), `SectionTitle`, `SpicyMark`.
+- Cards: 2–3px ink border, rounded, `shadow-stamp` / `shadow-stamp-lg`.
+- `src/components/heat.tsx`: `HeatProvider`, `useHeat()`, `HeatSwitch` (OG ⇄ Spicy, in hero + header). Spicy mode swaps hero copy/art, ribbon slogans, jumps the menu to its Spicy filter, adds embers and flame badges. Not persisted.
+- `src/components/open-status.tsx`: live "Open now / Closing soon / Closed" badge from `site.hours` in Asia/Dhaka time.
+- `src/components/mobile-order-bar.tsx`: below `lg`, a bottom bar (status · directions · order) that appears once the hero scrolls away.
 
 ## Page order
 
-Info bar (live status) → sticky frosted header over the hero (logo · nav ·
-heat switch · red Order) → hero (switch, headline, CTAs, product, fact tiles)
-→ About (polaroids + glass recipe cards) → Menu (glass tabs + cards) → dark
-red slogan ribbon → late-night photo band → two offer banners (red-lit +
-glass) → reviews on dark tiles → Visit (glass card + red tile IG card) → footer.
+Info bar (live open status) → sticky white header (logo · nav · heat switch ·
+red Order CTA) → OG/Spicy hero on tiles → yellow highlights strip → About (polaroids + two recipes) → Menu
+(category tabs, cards, foodpanda links) → slogan ribbon → late-night band →
+two-up offer banners → reviews on tiles → Visit + Instagram → ink footer.
+
+## Imagery
+
+Product cut-outs in `public/images/hero/` are on-brand. The photos in
+`public/images/*.jpg` are stock stand-ins — replace with the brand's own shoot.
+Menu cards show a photo only when `image` is set in `menu.ts`.
 
 ## Motion
 
-Heat-switch color morph, hero crossfade, spicy embers, slow-bobbing crumbs,
-ribbon marquee, hover lifts/glows. Nothing scroll-driven (the client rejected
-a scroll-filling bucket as cheap). All motion stops under reduced motion.
+Heat-switch color morph and hero crossfade, spicy embers, ribbon marquee,
+button press, card lift. Nothing scroll-driven: the client rejected a
+scroll-filling bucket as cheap. All motion stops under reduced motion.
+Container max 1200px.
 
 ## Pending
 
