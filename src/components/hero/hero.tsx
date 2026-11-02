@@ -7,21 +7,28 @@ import { content } from "@/lib/content";
 import { MENU_FILTER_EVENT } from "@/lib/menu";
 import { site } from "@/lib/site";
 import { Polaroid } from "@/components/ui/brand";
-import { HeatSwitch, type Heat } from "@/components/heat";
 import { useSafeReducedMotion } from "@/lib/use-safe-reduced-motion";
 import { cn } from "@/lib/cn";
 
-const HEATS: Heat[] = ["og", "spicy"];
-const INTERVAL_MS = 6000; // keep in step with the `progress` animation in tailwind.config.ts
+type Heat = "og" | "spicy";
 
-// Fixed ember field (no Math.random, so server and client agree).
-const EMBERS = Array.from({ length: 18 }, (_, i) => ({
-  left: (i * 37 + 11) % 100,
-  delay: ((i * 0.53) % 3.6).toFixed(2),
-  size: 4 + ((i * 7) % 6),
-  dx: ((i * 29) % 60) - 30,
-  dur: (3 + (i % 4) * 0.6).toFixed(1),
-}));
+const HEATS: Heat[] = ["og", "spicy"];
+const INTERVAL_MS = 6000;
+
+// Fixed ember field (no Math.random, so server and client agree). Each ember
+// gets a negative delay, so on first paint it's already partway up its flight.
+// Start heights are staggered too, so they never line up at a visible origin.
+const EMBERS = Array.from({ length: 22 }, (_, i) => {
+  const dur = 3.2 + (i % 5) * 0.55;
+  return {
+    left: (i * 37 + 11) % 100,
+    start: (i * 17) % 40,
+    size: 3 + ((i * 7) % 6),
+    dx: ((i * 29) % 60) - 30,
+    dur: dur.toFixed(2),
+    delay: (-((i * 0.61) % dur)).toFixed(2),
+  };
+});
 
 // Crumbs scattered around (and over the edge of) the polaroid.
 const CRUMBS = [
@@ -34,17 +41,15 @@ const CRUMBS = [
 /**
  * Reference-template hero (giant condensed headline, script eyebrow, CTA
  * pair, product art) on the brand's red tile wall. It slides between the OG
- * and Spicy heroes by itself, every 6s; the switch shows which is up and
- * fills a progress line. Hover/focus pauses it, picking a side with the
- * switch stops it, and reduced-motion users never get autoplay. Spicy
- * retints only this section (data-heat) and adds embers.
+ * and Spicy heroes by itself every 6s, with no control on screen. Hover/focus
+ * pauses it and reduced-motion users never get autoplay. Spicy retints only
+ * this section (data-heat) and fades in rising embers.
  */
 export function Hero() {
   const [heat, setHeat] = useState<Heat>("og");
   const [paused, setPaused] = useState(false);
-  const [stopped, setStopped] = useState(false);
   const reduce = useSafeReducedMotion();
-  const running = !paused && !stopped && !reduce;
+  const running = !paused && !reduce;
   const spicy = heat === "spicy";
 
   useEffect(() => {
@@ -52,11 +57,6 @@ export function Hero() {
     const id = window.setTimeout(() => setHeat((h) => (h === "og" ? "spicy" : "og")), INTERVAL_MS);
     return () => window.clearTimeout(id);
   }, [heat, running]);
-
-  const pick = (next: Heat) => {
-    setStopped(true);
-    setHeat(next);
-  };
 
   return (
     <section
@@ -80,54 +80,39 @@ export function Hero() {
         className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/35 to-transparent"
       />
 
-      {/* Heat: glow from below + embers. */}
+      {/* Heat: glow from below + embers. Always running underneath; spicy
+          just fades the layer in, so embers are already in the air. */}
       <div
         aria-hidden="true"
         className={cn(
           "pointer-events-none absolute inset-0 transition-opacity duration-700",
           spicy ? "opacity-100" : "opacity-0",
         )}
-        style={{ background: "radial-gradient(90% 55% at 62% 108%, rgba(255,116,25,.6), transparent 70%)" }}
-      />
-      {spicy && (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          {EMBERS.map((e, i) => (
-            <span
-              key={i}
-              className="absolute bottom-0 animate-ember rounded-full bg-[#FFB347] shadow-[0_0_10px_3px_rgba(255,116,25,.7)]"
-              style={
-                {
-                  left: `${e.left}%`,
-                  width: e.size,
-                  height: e.size,
-                  animationDelay: `${e.delay}s`,
-                  "--dx": `${e.dx}px`,
-                  "--dur": `${e.dur}s`,
-                } as React.CSSProperties
-              }
-            />
-          ))}
-        </div>
-      )}
+      >
+        <div
+          className="absolute inset-0"
+          style={{ background: "radial-gradient(90% 55% at 62% 108%, rgba(255,116,25,.6), transparent 70%)" }}
+        />
+        {EMBERS.map((e, i) => (
+          <span
+            key={i}
+            className="absolute animate-ember rounded-full bg-[#FFB347] opacity-0 shadow-[0_0_10px_3px_rgba(255,116,25,.7)]"
+            style={
+              {
+                left: `${e.left}%`,
+                bottom: `${e.start}%`,
+                width: e.size,
+                height: e.size,
+                animationDelay: `${e.delay}s`,
+                "--dx": `${e.dx}px`,
+                "--dur": `${e.dur}s`,
+              } as React.CSSProperties
+            }
+          />
+        ))}
+      </div>
 
       <div className="container-co relative">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-8 md:pt-10">
-          <div className="relative">
-            <HeatSwitch value={heat} onChange={pick} />
-            {/* Progress to the next slide; restarts each slide and on resume. */}
-            {running && (
-              <span
-                key={heat}
-                aria-hidden="true"
-                className="absolute -bottom-2.5 left-5 right-5 h-1 origin-left animate-progress rounded-full bg-accent"
-              />
-            )}
-          </div>
-          <p className="font-script text-[1.7rem] leading-none text-cream [text-shadow:2px_2px_0_#140C0A]">
-            {content.hero.switchLabel}
-          </p>
-        </div>
-
         <div className="grid" aria-live={running ? "off" : "polite"}>
           {HEATS.map((key) => {
             const s = content.hero.modes[key];
@@ -141,7 +126,7 @@ export function Hero() {
                 aria-hidden={!active}
                 inert={!active}
                 className={cn(
-                  "col-start-1 row-start-1 grid items-center gap-8 pb-16 pt-6 transition-[opacity,visibility] duration-700 md:pb-20 lg:min-h-[580px] lg:grid-cols-[1.1fr_0.9fr] lg:gap-6 lg:pt-2",
+                  "col-start-1 row-start-1 grid items-center gap-8 pb-16 pt-12 transition-[opacity,visibility] duration-700 md:pb-20 md:pt-16 lg:min-h-[600px] lg:grid-cols-[1.1fr_0.9fr] lg:gap-6 lg:pt-10",
                   active ? "visible opacity-100" : "invisible opacity-0",
                 )}
               >

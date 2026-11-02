@@ -10,7 +10,6 @@ export const content = {
   // One hero per heat; the hero auto-advances between them. Photos are the
   // brand's own menu shots (originals in "Menu images/").
   hero: {
-    switchLabel: "Pick your heat",
     modes: {
       og: {
         script: "Certified Crunch",
