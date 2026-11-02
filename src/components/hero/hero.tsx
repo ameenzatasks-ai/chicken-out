@@ -13,7 +13,7 @@ import { cn } from "@/lib/cn";
 type Heat = "og" | "spicy";
 
 const HEATS: Heat[] = ["og", "spicy"];
-const INTERVAL_MS = 6000;
+const INTERVAL_MS = 3000;
 
 // Fixed ember field (no Math.random, so server and client agree). Each ember
 // gets a negative delay, so on first paint it's already partway up its flight.
@@ -41,7 +41,7 @@ const CRUMBS = [
 /**
  * Reference-template hero (giant condensed headline, script eyebrow, CTA
  * pair, product art) on the brand's red tile wall. It slides between the OG
- * and Spicy heroes by itself every 6s, with no control on screen. Hover/focus
+ * and Spicy heroes by itself every 3s, with no control on screen. Hover/focus
  * pauses it and reduced-motion users never get autoplay. Spicy retints only
  * this section (data-heat) and fades in rising embers.
  */
