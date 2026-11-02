@@ -99,11 +99,17 @@ const config: Config = {
           "15%": { opacity: "1" },
           "100%": { transform: "translate3d(var(--dx,0px),-480px,0) scale(.3)", opacity: "0" },
         },
+        progress: {
+          from: { transform: "scaleX(0)" },
+          to: { transform: "scaleX(1)" },
+        },
       },
       animation: {
         marquee: "marquee 38s linear infinite",
         bob: "bob 5s ease-in-out infinite",
         ember: "ember var(--dur,3.6s) ease-out infinite",
+        // Matches the hero's INTERVAL_MS.
+        progress: "progress 6s linear forwards",
       },
     },
   },

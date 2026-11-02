@@ -1,14 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ShoppingBag } from "lucide-react";
 import { content } from "@/lib/content";
+import { MENU_FILTER_EVENT } from "@/lib/menu";
 import { site } from "@/lib/site";
-import { BucketStack, PriceSticker } from "@/components/ui/brand";
-import { HeatSwitch, useHeat, type Heat } from "@/components/heat";
+import { Polaroid } from "@/components/ui/brand";
+import { HeatSwitch, type Heat } from "@/components/heat";
+import { useSafeReducedMotion } from "@/lib/use-safe-reduced-motion";
 import { cn } from "@/lib/cn";
 
 const HEATS: Heat[] = ["og", "spicy"];
+const INTERVAL_MS = 6000; // keep in step with the `progress` animation in tailwind.config.ts
 
 // Fixed ember field (no Math.random, so server and client agree).
 const EMBERS = Array.from({ length: 18 }, (_, i) => ({
@@ -19,25 +23,53 @@ const EMBERS = Array.from({ length: 18 }, (_, i) => ({
   dur: (3 + (i % 4) * 0.6).toFixed(1),
 }));
 
+// Crumbs scattered around (and over the edge of) the polaroid.
 const CRUMBS = [
-  { src: "/images/hero/crumb-1.png", w: 69, h: 78, cls: "left-[6%] top-[12%] w-[9%]" },
-  { src: "/images/hero/crumb-3.png", w: 63, h: 81, cls: "right-[4%] top-[24%] w-[8%]" },
-  { src: "/images/hero/crumb-2.png", w: 87, h: 84, cls: "bottom-[8%] left-[18%] w-[10%]" },
-  { src: "/images/hero/crumb-4.png", w: 84, h: 51, cls: "bottom-[16%] right-[10%] w-[10%]" },
+  { src: "/images/hero/crumb-1.png", w: 69, h: 78, cls: "-left-[2%] top-[4%] w-[9%]" },
+  { src: "/images/hero/crumb-3.png", w: 63, h: 81, cls: "-right-[1%] top-[26%] w-[8%] [animation-delay:1.2s]" },
+  { src: "/images/hero/crumb-2.png", w: 87, h: 84, cls: "-bottom-[1%] left-[10%] w-[10%] [animation-delay:2.1s]" },
+  { src: "/images/hero/crumb-4.png", w: 84, h: 51, cls: "bottom-[6%] -right-[2%] w-[10%] [animation-delay:.6s]" },
 ];
 
 /**
  * Reference-template hero (giant condensed headline, script eyebrow, CTA
- * pair, product art, round price badge) on the brand's red tile wall. The
- * OG ⇄ Spicy switch picks which of the two heroes shows; spicy mode adds a
- * heat glow and rising embers.
+ * pair, product art) on the brand's red tile wall. It slides between the OG
+ * and Spicy heroes by itself, every 6s; the switch shows which is up and
+ * fills a progress line. Hover/focus pauses it, picking a side with the
+ * switch stops it, and reduced-motion users never get autoplay. Spicy
+ * retints only this section (data-heat) and adds embers.
  */
 export function Hero() {
-  const { heat } = useHeat();
+  const [heat, setHeat] = useState<Heat>("og");
+  const [paused, setPaused] = useState(false);
+  const [stopped, setStopped] = useState(false);
+  const reduce = useSafeReducedMotion();
+  const running = !paused && !stopped && !reduce;
   const spicy = heat === "spicy";
 
+  useEffect(() => {
+    if (!running) return;
+    const id = window.setTimeout(() => setHeat((h) => (h === "og" ? "spicy" : "og")), INTERVAL_MS);
+    return () => window.clearTimeout(id);
+  }, [heat, running]);
+
+  const pick = (next: Heat) => {
+    setStopped(true);
+    setHeat(next);
+  };
+
   return (
-    <section id="top" aria-label="Featured" className="bg-tiles relative overflow-hidden text-white">
+    <section
+      id="top"
+      aria-roledescription="carousel"
+      aria-label="Featured"
+      data-heat={heat}
+      className="bg-tiles relative -mt-[76px] overflow-hidden pt-[76px] text-white md:-mt-[84px] md:pt-[84px]"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+    >
       <h1 className="sr-only">
         {site.name} — fried chicken at Centrum Food Court, Bashundhara, Dhaka
       </h1>
@@ -80,30 +112,43 @@ export function Hero() {
 
       <div className="container-co relative">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-8 md:pt-10">
-          <HeatSwitch size="lg" />
+          <div className="relative">
+            <HeatSwitch value={heat} onChange={pick} />
+            {/* Progress to the next slide; restarts each slide and on resume. */}
+            {running && (
+              <span
+                key={heat}
+                aria-hidden="true"
+                className="absolute -bottom-2.5 left-5 right-5 h-1 origin-left animate-progress rounded-full bg-accent"
+              />
+            )}
+          </div>
           <p className="font-script text-[1.7rem] leading-none text-cream [text-shadow:2px_2px_0_#140C0A]">
-            {content.hero.switchLabel[heat]}
+            {content.hero.switchLabel}
           </p>
         </div>
 
-        <div className="grid">
+        <div className="grid" aria-live={running ? "off" : "polite"}>
           {HEATS.map((key) => {
             const s = content.hero.modes[key];
             const active = key === heat;
             return (
               <div
                 key={key}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={key === "og" ? "OG" : "Spicy"}
                 aria-hidden={!active}
                 inert={!active}
                 className={cn(
-                  "col-start-1 row-start-1 grid items-center gap-6 pb-16 pt-6 transition-[opacity,visibility] duration-500 md:pb-20 lg:min-h-[580px] lg:grid-cols-[1.1fr_0.9fr] lg:gap-4 lg:pt-2",
+                  "col-start-1 row-start-1 grid items-center gap-8 pb-16 pt-6 transition-[opacity,visibility] duration-700 md:pb-20 lg:min-h-[580px] lg:grid-cols-[1.1fr_0.9fr] lg:gap-6 lg:pt-2",
                   active ? "visible opacity-100" : "invisible opacity-0",
                 )}
               >
                 {/* Copy */}
                 <div
                   className={cn(
-                    "relative z-10 transition-transform duration-500 ease-out",
+                    "relative z-10 transition-transform duration-700 ease-out",
                     active ? "translate-y-0" : "translate-y-6",
                   )}
                 >
@@ -123,57 +168,45 @@ export function Hero() {
                       <ShoppingBag className="h-4 w-4" aria-hidden="true" />
                       Order now
                     </a>
-                    <a href="#menu" className="btn btn-light">
+                    <a
+                      href="#menu"
+                      onClick={() =>
+                        window.dispatchEvent(new CustomEvent(MENU_FILTER_EVENT, { detail: s.menuFilter }))
+                      }
+                      className="btn btn-light"
+                    >
                       {s.menuCta}
                     </a>
                   </div>
                 </div>
 
-                {/* Art */}
+                {/* Art: the menu photo as a tilted polaroid, crumbs drifting round it. */}
                 <div
                   className={cn(
-                    "relative mx-auto w-full max-w-[420px] transition-[transform,opacity] duration-500 ease-out lg:max-w-[460px]",
+                    "relative mx-auto w-full max-w-[440px] px-3 py-4 transition-[transform,opacity] duration-700 ease-out lg:max-w-[500px]",
                     active ? "translate-x-0 scale-100" : "translate-x-10 scale-95",
                   )}
                 >
-                  {key === "og" ? (
-                    <BucketStack priority className="mx-auto w-[78%]" />
-                  ) : (
-                    <div className="relative mx-auto aspect-square w-full">
-                      <div className="absolute inset-[8%] rounded-full border-[3px] border-ink bg-accent shadow-stamp-lg" />
-                      <Image
-                        src="/images/hero/piece-thigh.png"
-                        alt="A piece of crispy spicy fried chicken"
-                        width={374}
-                        height={304}
-                        sizes="(max-width: 1024px) 80vw, 460px"
-                        className="absolute left-1/2 top-1/2 w-[92%] -translate-x-1/2 -translate-y-1/2 -rotate-12 drop-shadow-[0_24px_24px_rgba(0,0,0,.45)]"
-                      />
-                      {CRUMBS.map((c) => (
-                        <Image
-                          key={c.src}
-                          src={c.src}
-                          alt=""
-                          aria-hidden="true"
-                          width={c.w}
-                          height={c.h}
-                          className={cn("absolute animate-bob", c.cls)}
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  <PriceSticker
-                    top={s.sticker.top}
-                    price={s.sticker.price}
-                    hot={key === "spicy"}
-                    className={cn(
-                      "absolute",
-                      key === "og"
-                        ? "right-0 top-[4%] rotate-[10deg] sm:right-[2%]"
-                        : "bottom-[2%] right-[4%] -rotate-6",
-                    )}
+                  <Polaroid
+                    src={s.photo.src}
+                    alt={s.photo.alt}
+                    caption={s.photo.caption}
+                    ratio="aspect-[3/2]"
+                    priority={key === "og"}
+                    sizes="(max-width: 1024px) 90vw, 500px"
+                    className={key === "og" ? "rotate-[3deg]" : "-rotate-[3deg]"}
                   />
+                  {CRUMBS.map((c) => (
+                    <Image
+                      key={c.src}
+                      src={c.src}
+                      alt=""
+                      aria-hidden="true"
+                      width={c.w}
+                      height={c.h}
+                      className={cn("absolute z-10 animate-bob drop-shadow-[0_6px_6px_rgba(0,0,0,.35)]", c.cls)}
+                    />
+                  ))}
                 </div>
               </div>
             );

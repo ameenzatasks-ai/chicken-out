@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ArrowUpRight, Flame } from "lucide-react";
 import { content } from "@/lib/content";
-import { menu, menuCategories, type MenuCategory, type MenuItem } from "@/lib/menu";
+import { MENU_FILTER_EVENT, menu, menuCategories, type MenuCategory, type MenuItem } from "@/lib/menu";
 import { price, site } from "@/lib/site";
 import { SectionTitle, SpicyMark } from "@/components/ui/brand";
-import { useHeat } from "@/components/heat";
 import { cn } from "@/lib/cn";
 
 type Filter = "All" | "Spicy" | MenuCategory;
@@ -18,24 +17,23 @@ const matches = (f: Filter, m: MenuItem) =>
 
 /**
  * Reference "Popular Food Items" grid, filtered by the same categories the
- * brand uses on foodpanda, plus a Spicy filter that spicy mode switches to.
- * Cards show a photo only when menu.ts provides one.
+ * brand uses on foodpanda, plus a Spicy filter. The hero's menu buttons
+ * pre-select a tab ("See the spicy picks" → Spicy). Cards show a photo only
+ * when menu.ts provides one.
  */
 export function MenuSection() {
   const [filter, setFilter] = useState<Filter>("All");
-  const { heat } = useHeat();
-  const spicyMode = heat === "spicy";
   const items = menu.filter((m) => matches(filter, m));
   const c = content.menu;
 
-  // Flipping the heat switch jumps the menu to match; manual tab picks after
-  // that are left alone.
-  const lastHeat = useRef(heat);
   useEffect(() => {
-    if (lastHeat.current === heat) return;
-    lastHeat.current = heat;
-    setFilter(heat === "spicy" ? "Spicy" : "All");
-  }, [heat]);
+    const onFilter = (e: Event) => {
+      const next = (e as CustomEvent<Filter>).detail;
+      if (FILTERS.includes(next)) setFilter(next);
+    };
+    window.addEventListener(MENU_FILTER_EVENT, onFilter);
+    return () => window.removeEventListener(MENU_FILTER_EVENT, onFilter);
+  }, []);
 
   return (
     <section id="menu" className="bg-paper py-20 md:py-28">
@@ -94,11 +92,6 @@ export function MenuSection() {
                     <h3 className="mt-1.5 text-[1.75rem] leading-[1.02] text-ink">{item.name}</h3>
                   </div>
                   <div className="relative shrink-0 rotate-3 rounded-xl border-2 border-ink bg-accent px-3 py-1.5 text-center shadow-stamp transition-transform group-hover:rotate-0">
-                    {spicyMode && item.spicy && (
-                      <span className="absolute -right-2.5 -top-3 grid h-7 w-7 place-items-center rounded-full border-2 border-ink bg-brand text-white">
-                        <Flame className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
-                      </span>
-                    )}
                     <span className="block text-[0.65rem] font-bold uppercase tracking-[0.14em] text-ink">from</span>
                     <span className="block font-display text-[1.6rem] leading-none text-ink">{price(item.price)}</span>
                   </div>

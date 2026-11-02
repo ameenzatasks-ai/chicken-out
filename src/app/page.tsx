@@ -1,4 +1,3 @@
-import { HeatProvider } from "@/components/heat";
 import { SiteHeader } from "@/components/site-header";
 import { Hero } from "@/components/hero/hero";
 import { Highlights } from "@/components/sections/highlights";
@@ -16,11 +15,11 @@ import { MobileOrderBar } from "@/components/mobile-order-bar";
  * Section order follows the reference restaurant template (YouTube short
  * ZYqRlWiiFjQ): header → product hero → feature strip → "about our food" →
  * popular items → special-offer band → two-up promo banners → reviews →
- * location → footer. HeatProvider drives the OG ⇄ Spicy switch.
+ * location → footer.
  */
 export default function Home() {
   return (
-    <HeatProvider>
+    <>
       <SiteHeader />
       <main id="main">
         <Hero />
@@ -35,6 +34,6 @@ export default function Home() {
       </main>
       <SiteFooter />
       <MobileOrderBar />
-    </HeatProvider>
+    </>
   );
 }

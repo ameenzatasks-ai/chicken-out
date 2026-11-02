@@ -7,25 +7,36 @@
  * swap in the brand's own shoot when available.
  */
 export const content = {
-  // One hero per heat; the OG ⇄ Spicy switch flips between them.
+  // One hero per heat; the hero auto-advances between them. Photos are the
+  // brand's own menu shots (originals in "Menu images/").
   hero: {
-    switchLabel: { og: "Pick your heat", spicy: "Brave choice." },
+    switchLabel: "Pick your heat",
     modes: {
       og: {
         script: "Certified Crunch",
         titleTop: "OG Crispy",
         titleStamp: "Chicken",
         body: "Fried until golden and seasoned with our classic herb & secret spice blend. The one that started it all.",
-        sticker: { top: "from", price: 160 },
+        photo: {
+          src: "/images/menu/og-crispy-chicken.jpg",
+          alt: "OG Crispy Chicken in a Chicken Out box",
+          caption: "The OG",
+        },
         menuCta: "See the menu",
+        menuFilter: "All" as const,
       },
       spicy: {
         script: "Too hot to handle?",
         titleTop: "Don’t",
         titleStamp: "Chicken Out",
         body: "Our spicy fried chicken is marinated in fiery chili and traditional aromatic spice. Extra heat, same crunch.",
-        sticker: { top: "from", price: 180 },
+        photo: {
+          src: "/images/menu/spicy-burger.jpg",
+          alt: "Chicken Out Spicy Burger with spicy sauce, lettuce and pickles",
+          caption: "Spicy Burger",
+        },
         menuCta: "See the spicy picks",
+        menuFilter: "Spicy" as const,
       },
     },
   },
@@ -44,8 +55,8 @@ export const content = {
         text: "Fiery chili & aromatic spice in the marinade and the batter. For people who don’t chicken out.",
       },
     ],
-    photoMain: { src: "/images/gallery-paper-bag.jpg", alt: "Fried chicken pieces served in paper boats" },
-    photoSmall: { src: "/images/menu-fried-chicken.jpg", alt: "Crispy chicken strips with a dip" },
+    photoMain: { src: "/images/about-burgers.jpg", alt: "Two Chicken Out crispy chicken burgers held up in front of a branded bag" },
+    photoSmall: { src: "/images/about-box-bag.jpg", alt: "Fried chicken in a Chicken Out box next to a branded paper bag" },
     caption: "Crispy since day 1",
   },
 
@@ -55,10 +66,16 @@ export const content = {
     note: "Prices as listed on foodpanda. In-store prices may differ.",
   },
 
-  ribbon: {
-    og: ["Certified Crunch", "Crispy Since Day 1", "Better Chicken", "Bolder Flavours", "Made Different", "Too Good To Share"],
-    spicy: ["Don’t Chicken Out", "Bring The Heat", "Fiery Chili", "Extra Spicy", "Extra Crispy", "Certified Crunch"],
-  },
+  ribbon: [
+    "Certified Crunch",
+    "Don’t Chicken Out",
+    "Crispy Since Day 1",
+    "Bring The Heat",
+    "Better Chicken",
+    "Bolder Flavours",
+    "Made Different",
+    "Too Good To Share",
+  ],
 
   lateNight: {
     script: "Late-night cravings?",

@@ -1,12 +1,8 @@
-"use client";
-
 import { content } from "@/lib/content";
-import { useHeat } from "@/components/heat";
 
-/** Scrolling slogan band, lines lifted from the brand's Instagram posts. Swaps to heat slogans in spicy mode. */
+/** Scrolling slogan band: OG and heat lines from the brand's Instagram posts, alternating. */
 export function Ribbon() {
-  const { heat } = useHeat();
-  const words = content.ribbon[heat];
+  const words = content.ribbon;
   const run = (hidden: boolean) => (
     <ul className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
       {words.map((w) => (

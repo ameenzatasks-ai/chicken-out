@@ -23,6 +23,9 @@ export type MenuItem = {
 
 export const menuCategories: MenuCategory[] = ["Chicken", "Burger", "Wrap", "Sides"];
 
+/** Window event that pre-selects a menu tab; detail is "All" | "Spicy" | a category. */
+export const MENU_FILTER_EVENT = "chickenout:menu-filter";
+
 export const menu: MenuItem[] = [
   {
     id: "og-crispy-chicken",

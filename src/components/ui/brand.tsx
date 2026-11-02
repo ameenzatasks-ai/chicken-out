@@ -16,6 +16,7 @@ export function Polaroid({
   caption,
   className,
   captionClassName,
+  ratio = "aspect-[4/5]",
   sizes = "(max-width: 768px) 80vw, 420px",
   priority = false,
 }: {
@@ -24,12 +25,14 @@ export function Polaroid({
   caption?: string;
   className?: string;
   captionClassName?: string;
+  /** Tailwind aspect class for the photo window, e.g. "aspect-[3/2]". */
+  ratio?: string;
   sizes?: string;
   priority?: boolean;
 }) {
   return (
     <figure className={cn("polaroid", className)}>
-      <div className="relative aspect-[4/5] overflow-hidden bg-ink">
+      <div className={cn("relative overflow-hidden bg-ink", ratio)}>
         <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className="object-cover" />
       </div>
       {caption && (
